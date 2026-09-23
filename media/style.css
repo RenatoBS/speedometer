@@ -1,0 +1,142 @@
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  font-family: var(--vscode-font-family, sans-serif);
+  color: var(--vscode-foreground);
+  background: var(--vscode-editor-background);
+  padding: 16px 20px 24px;
+  margin: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.topbar h1 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.3));
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segmented button {
+  background: transparent;
+  color: var(--vscode-foreground);
+  border: none;
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  background: var(--vscode-button-background, #0e639c);
+  color: var(--vscode-button-foreground, #fff);
+}
+
+#refresh-btn {
+  background: transparent;
+  color: var(--vscode-foreground);
+  border: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.3));
+  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card {
+  border: 1px solid var(--vscode-widget-border, rgba(128, 128, 128, 0.25));
+  border-left: 3px solid var(--accent, #888);
+  border-radius: 8px;
+  padding: 12px 14px;
+  background: var(--vscode-editorWidget-background, rgba(128, 128, 128, 0.06));
+}
+
+.card-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+  margin-bottom: 6px;
+}
+
+.card-percent {
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.card-percent-label {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.65;
+}
+
+.bar-track {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(128, 128, 128, 0.25);
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent, #888);
+}
+
+.card-sub {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.card-note {
+  font-size: 11px;
+  opacity: 0.6;
+  margin-top: 4px;
+}
+
+.card-unavailable {
+  font-size: 12px;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+.chart-wrap {
+  height: 340px;
+  position: relative;
+}
+
+.muted {
+  opacity: 0.55;
+  font-size: 11px;
+  margin-top: 14px;
+}

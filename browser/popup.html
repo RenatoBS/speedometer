@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { width: 320px; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; }
+    .title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .subtitle { font-size: 12px; color: #888; margin-bottom: 16px; }
+    .platform-section { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+    .platform-name { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+    .platform-desc { font-size: 12px; color: #666; margin-bottom: 12px; }
+    .action-btn { color: #fff; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; width: 100%; font-size: 13px; font-weight: 600; }
+    .cursor { background: #000; }
+    .trae { background: #007bff; }
+    .help { margin-top: 12px; font-size: 12px; color: #666; }
+  </style>
+</head>
+<body>
+  <div class="title">Speedometer</div>
+  <div class="subtitle">Copiar token de sessão do Cursor ou Trae</div>
+  <div class="platform-section">
+    <div class="platform-name">Cursor</div>
+    <div class="platform-desc">Abre o dashboard e copia WorkosCursorSessionToken.</div>
+    <button id="cursorBtn" class="action-btn cursor">Ir ao dashboard do Cursor</button>
+  </div>
+  <div class="platform-section">
+    <div class="platform-name">Trae</div>
+    <div class="platform-desc">Abre a página de uso e copia X-Cloudide-Session.</div>
+    <button id="traeBtn" class="action-btn trae">Ir à página de uso do Trae</button>
+  </div>
+  <div class="help">Volte ao IDE; a Speedometer pergunta se deve adicionar a conta extra.</div>
+  <script src="popup.js"></script>
+</body>
+</html>

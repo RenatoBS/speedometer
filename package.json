@@ -1,0 +1,186 @@
+{
+  "name": "speedometer",
+  "displayName": "Speedometer — AI Usage",
+  "description": "Limites oficiais de Claude Code, Codex CLI, Cursor, Trae e Antigravity na status bar, com dashboard e contas extras.",
+  "version": "0.2.3",
+  "publisher": "local-dev",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["AI", "Visualization", "Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "icons": {
+      "speedometer-claude": {
+        "description": "Claude",
+        "default": { "fontPath": "./assets/usage-icons.woff", "fontCharacter": "\\E900" }
+      },
+      "speedometer-codex": {
+        "description": "Codex",
+        "default": { "fontPath": "./assets/usage-icons.woff", "fontCharacter": "\\E901" }
+      },
+      "speedometer-antigravity": {
+        "description": "Antigravity",
+        "default": { "fontPath": "./assets/coding-usage-icons.woff", "fontCharacter": "\\E001" }
+      },
+      "speedometer-cursor": {
+        "description": "Cursor",
+        "default": { "fontPath": "./assets/coding-usage-icons.woff", "fontCharacter": "\\E002" }
+      },
+      "speedometer-trae": {
+        "description": "Trae",
+        "default": { "fontPath": "./assets/coding-usage-icons.woff", "fontCharacter": "\\E003" }
+      }
+    },
+    "commands": [
+      {
+        "command": "speedometer.refresh",
+        "title": "Speedometer: Atualizar uso",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "speedometer.openDashboard",
+        "title": "Speedometer: Abrir dashboard",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "speedometer.openMenu",
+        "title": "Speedometer: Menu rápido"
+      },
+      {
+        "command": "speedometer.openSettings",
+        "title": "Speedometer: Abrir configurações"
+      },
+      {
+        "command": "speedometer.showOutput",
+        "title": "Speedometer: Mostrar logs"
+      },
+      {
+        "command": "speedometer.exportLogs",
+        "title": "Speedometer: Exportar logs"
+      }
+    ],
+    "configuration": {
+      "title": "Speedometer",
+      "properties": {
+        "speedometer.warningThreshold": {
+          "type": "number",
+          "default": 80,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Fundo laranja na status bar a partir deste %."
+        },
+        "speedometer.errorThreshold": {
+          "type": "number",
+          "default": 95,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Fundo vermelho na status bar a partir deste %."
+        },
+        "speedometer.refreshIntervalSeconds": {
+          "type": "number",
+          "default": 60,
+          "minimum": 15,
+          "description": "Intervalo de atualização em segundos (pausa com a janela sem foco)."
+        },
+        "speedometer.displayMode": {
+          "type": "string",
+          "enum": ["compact", "full"],
+          "default": "full",
+          "description": "A status bar sempre mostra 5h e 7d (Claude/Codex) e Auto e API (Cursor)."
+        },
+        "speedometer.showAllProviders": {
+          "type": "boolean",
+          "default": false,
+          "description": "Mostrar Cursor, Trae e Antigravity mesmo fora do IDE atual."
+        },
+        "speedometer.showPromptCacheTimer": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mostrar countdown de 5 min do Prompt Cache no Cursor."
+        },
+        "speedometer.additionalSessionTokens": {
+          "type": "string",
+          "default": "",
+          "editPresentation": "multilineText",
+          "description": "Tokens de contas extras, um por linha (máx. 3)."
+        },
+        "speedometer.teamServerUrl": {
+          "type": "string",
+          "default": "",
+          "description": "URL do Team Server próprio (opcional). Nada é enviado se vazio."
+        },
+        "speedometer.enableReporting": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enviar uso ao Team Server configurado."
+        },
+        "speedometer.claude.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mostrar uso do Claude Code."
+        },
+        "speedometer.claude.credentialsPath": {
+          "type": "string",
+          "default": "",
+          "description": "Caminho alternativo de ~/.claude/.credentials.json."
+        },
+        "speedometer.claude.accountLabel": {
+          "type": "string",
+          "default": "",
+          "description": "Rótulo opcional da conta Claude no tooltip."
+        },
+        "speedometer.codex.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mostrar uso do Codex CLI."
+        },
+        "speedometer.codex.sessionsPath": {
+          "type": "string",
+          "default": "",
+          "description": "Caminho alternativo de ~/.codex/sessions."
+        },
+        "speedometer.cursor.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mostrar uso do Cursor."
+        },
+        "speedometer.trae.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mostrar uso do Trae."
+        },
+        "speedometer.antigravity.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mostrar uso do Antigravity."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
+    "compile": "tsc -p ./ --noEmit && tsc -p ./src/webview --noEmit",
+    "compile:test": "tsc -p ./ --outDir out",
+    "test": "npm run compile:test && node --test \"test/*.test.cjs\"",
+    "package": "vsce package --allow-missing-repository --allow-star-activation",
+    "install:editor": "node scripts/install.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/sql.js": "^1.4.9",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.4",
+    "sql.js": "^1.12.0"
+  }
+}

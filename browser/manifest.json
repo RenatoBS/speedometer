@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Speedometer Token Extractor",
+  "version": "0.2.0",
+  "description": "Copia tokens de sessão do Cursor e do Trae para a extensão Speedometer.",
+  "permissions": ["activeTab", "storage", "webRequest", "tabs", "cookies"],
+  "host_permissions": ["*://*.trae.ai/*", "*://*.cursor.com/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Speedometer Token Extractor",
+    "default_icon": { "16": "icon16.png", "48": "icon48.png", "128": "icon128.png" }
+  },
+  "content_scripts": [
+    { "matches": ["*://*.trae.ai/*", "*://*.cursor.com/*"], "js": ["content.js"], "run_at": "document_end" }
+  ],
+  "icons": { "16": "icon16.png", "48": "icon48.png", "128": "icon128.png" },
+  "minimum_chrome_version": "88"
+}

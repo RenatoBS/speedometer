@@ -1,0 +1,29 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "watch",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "esbuild",
+        "pattern": {
+          "regexp": "."
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "watching",
+          "endsPattern": "Done in"
+        }
+      },
+      "presentation": {
+        "reveal": "silent"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "label": "npm: watch"
+    }
+  ]
+}

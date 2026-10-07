@@ -230,6 +230,38 @@ test('최신 로그가 비어 있어도 최근 유효 사용량을 탐색한다'
   }
 });
 
+// 파일명은 세션 시작 시각이므로, 오래된 이름의 활성 세션도 수정 시각으로 우선해야 한다.
+test('세션 시작 시각 대신 파일 수정 시각으로 활성 로그를 포함한다', async () => {
+  const root = await createTempDir();
+  try {
+    const now = Date.now();
+    await writeTimestampedLogFile(
+      path.join(root, '2026', '10', '01'),
+      'rollout-active-old-name.jsonl',
+      { primary: { used_percent: 61, window_minutes: 300, resets_in_seconds: 3600 } },
+      new Date(now - 30 * 1000),
+      new Date(now),
+    );
+
+    for (let index = 0; index < 30; index += 1) {
+      await writeLogFile(
+        path.join(root, '2026', '10', '06'),
+        `rollout-new-but-idle-${String(index).padStart(2, '0')}.jsonl`,
+        { primary: { used_percent: index, window_minutes: 300, resets_in_seconds: 3600 } },
+        new Date(now - (index + 2) * 60 * 1000),
+      );
+    }
+
+    const result = await fetchCodexUsage(root);
+
+    assert.equal(result.status, 'ok');
+    assert.equal(result.data.windows[0].percent, 61);
+    assert.equal(result.data.fetchedAt.getTime(), now - 30 * 1000);
+  } finally {
+    await fsp.rm(root, { recursive: true, force: true });
+  }
+});
+
 // 파일 수정 시각과 무관한 최신 이벤트 선택 검증
 test('파일 수정 시각 대신 최신 rate_limits 이벤트 시각을 사용한다', async () => {
   const root = await createTempDir();

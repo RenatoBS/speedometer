@@ -74,25 +74,31 @@ async function readCodexAccount(sessionsDir: string): Promise<string | null> {
   return auth.tokens?.account_id ?? null;
 }
 
-// 이름 역순 우선 순회로 최신 jsonl 파일 수집
-async function collectRecentJsonlFiles(dir: string, out: string[], limit: number): Promise<void> {
+interface SessionLogFile {
+  path: string;
+  modifiedAt: number;
+}
+
+// 수정 시각 기준으로 최근 jsonl 파일 수집. 파일명은 세션 시작 시각이라,
+// 오래 전에 시작된 세션이 계속 기록되는 경우 최신 사용량과 다를 수 있다.
+async function collectRecentJsonlFiles(dir: string, out: SessionLogFile[]): Promise<void> {
   let entries;
   try {
     entries = await fs.readdir(dir, { withFileTypes: true });
   } catch {
     return;
   }
-  // 연/월/일 디렉터리 구조 최신 날짜 우선 순회
-  entries.sort((a, b) => b.name.localeCompare(a.name));
   for (const entry of entries) {
-    if (out.length >= limit) {
-      return;
-    }
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      await collectRecentJsonlFiles(full, out, limit);
+      await collectRecentJsonlFiles(full, out);
     } else if (entry.isFile() && entry.name.endsWith('.jsonl')) {
-      out.push(full);
+      try {
+        const stat = await fs.stat(full);
+        out.push({ path: full, modifiedAt: stat.mtimeMs });
+      } catch {
+        // 세션이 회전하거나 삭제되는 중이면 다음 새로고침에서 재시도한다.
+      }
     }
   }
 }
@@ -202,8 +208,12 @@ export async function fetchCodexUsage(customSessionsPath: string): Promise<Usage
     };
   }
 
-  const files: string[] = [];
-  await collectRecentJsonlFiles(sessionsDir, files, MAX_FILES_TO_COLLECT);
+  const collectedFiles: SessionLogFile[] = [];
+  await collectRecentJsonlFiles(sessionsDir, collectedFiles);
+  const files = collectedFiles
+    .sort((a, b) => b.modifiedAt - a.modifiedAt)
+    .slice(0, MAX_FILES_TO_COLLECT)
+    .map((file) => file.path);
   if (files.length === 0) {
     return { status: 'missing', message: l10n.t('No Codex session logs (run codex to populate)') };
   }

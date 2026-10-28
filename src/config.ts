@@ -29,6 +29,7 @@ export interface ExtensionConfig {
   cursorEnabled: boolean;
   traeEnabled: boolean;
   antigravityEnabled: boolean;
+  grokbotEnabled: boolean;
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -69,7 +70,8 @@ export function getConfig(): ExtensionConfig {
     codexSessionsPath: c.get<string>('codex.sessionsPath', '') ?? '',
     cursorEnabled: c.get<boolean>('cursor.enabled', true),
     traeEnabled: c.get<boolean>('trae.enabled', true),
-    antigravityEnabled: c.get<boolean>('antigravity.enabled', true)
+    antigravityEnabled: c.get<boolean>('antigravity.enabled', true),
+    grokbotEnabled: c.get<boolean>('grokbot.enabled', true)
   };
 }
 

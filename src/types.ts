@@ -1,4 +1,4 @@
-export type ProviderId = 'claude' | 'codex' | 'cursor' | 'trae' | 'antigravity';
+export type ProviderId = 'claude' | 'codex' | 'cursor' | 'trae' | 'antigravity' | 'grokbot';
 
 export type WindowKind = 'session' | 'weekly' | 'scoped' | 'plan' | 'auto' | 'ondemand' | 'entitlement';
 

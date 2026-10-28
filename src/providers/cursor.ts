@@ -98,9 +98,9 @@ let authCache: {
   email: string | null;
 } | null = null;
 
-async function loadCursorAuth(
+export async function loadCursorAuth(
   context: vscode.ExtensionContext,
-  dbPath: string
+  dbPath: string = cursorGlobalStateDb()
 ): Promise<{ accessToken: string | null; email: string | null; safeStorageError?: string }> {
   if (authCache && authCache.dbPath === dbPath && Date.now() < authCache.expiresAt) {
     return authCache;

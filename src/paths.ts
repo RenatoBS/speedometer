@@ -28,6 +28,14 @@ export function antigravityGlobalStateDb(): string {
   return path.join(appSupportDir('Antigravity'), 'User', 'globalStorage', 'state.vscdb');
 }
 
+export function grokbotUserDataDir(): string {
+  return appSupportDir('Grok Bot');
+}
+
+export function grokbotDataRoot(): string {
+  return path.join(os.homedir(), '.grokbot');
+}
+
 export function workspaceStateDb(appFolderName: string, workspaceDir: string, ctimeMs: number): string {
   const crypto = require('crypto') as typeof import('crypto');
   const normalized =

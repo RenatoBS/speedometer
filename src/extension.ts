@@ -10,6 +10,7 @@ import { fetchAntigravityUsage } from './providers/antigravity';
 import { fetchClaudeUsage } from './providers/claude';
 import { fetchCodexUsage, resolveSessionsPath } from './providers/codex';
 import { fetchCursorUsage } from './providers/cursor';
+import { fetchGrokbotUsage } from './providers/grokbot';
 import { fetchTraeUsage } from './providers/trae';
 import { RetryingWatcher } from './retrying-watcher';
 import { SingleFlight } from './single-flight';
@@ -30,7 +31,8 @@ const TITLES: Record<ProviderId, string> = {
   codex: 'Codex CLI',
   cursor: 'Cursor',
   trae: 'Trae',
-  antigravity: 'Antigravity'
+  antigravity: 'Antigravity',
+  grokbot: 'Grok Bot'
 };
 
 const ICONS: Record<ProviderId, string> = {
@@ -38,7 +40,8 @@ const ICONS: Record<ProviderId, string> = {
   codex: 'speedometer-codex',
   cursor: 'speedometer-cursor',
   trae: 'speedometer-trae',
-  antigravity: 'speedometer-antigravity'
+  antigravity: 'speedometer-antigravity',
+  grokbot: 'robot'
 };
 
 let refreshTimer: ReturnType<typeof setInterval> | undefined;
@@ -56,11 +59,12 @@ function enabled(id: ProviderId): boolean {
   if (id === 'codex') return c.codexEnabled;
   if (id === 'cursor') return c.cursorEnabled;
   if (id === 'trae') return c.traeEnabled;
+  if (id === 'grokbot') return c.grokbotEnabled;
   return c.antigravityEnabled;
 }
 
 function visibleForIde(id: ProviderId): boolean {
-  if (id === 'claude' || id === 'codex') return true;
+  if (id === 'claude' || id === 'codex' || id === 'grokbot') return true;
   if (getConfig().showAllProviders) return true;
   const app = getAppType();
   if (app === 'unknown') return id === 'cursor';
@@ -168,6 +172,7 @@ async function showQuickMenu(bindings: ProviderBinding[]): Promise<void> {
     { label: `$(speedometer-cursor) Cursor`, description: onOff(c.cursorEnabled), action: 'toggleCursor' },
     { label: `$(speedometer-trae) Trae`, description: onOff(c.traeEnabled), action: 'toggleTrae' },
     { label: `$(speedometer-antigravity) Antigravity`, description: onOff(c.antigravityEnabled), action: 'toggleAntigravity' },
+    { label: `$(robot) Grok Bot`, description: onOff(c.grokbotEnabled), action: 'toggleGrokbot' },
     { label: '', kind: vscode.QuickPickItemKind.Separator },
     {
       label: c.showAllProviders ? '$(check) Mostrar todos os IDEs' : '$(circle-slash) Mostrar todos os IDEs',
@@ -186,7 +191,8 @@ async function showQuickMenu(bindings: ProviderBinding[]): Promise<void> {
     toggleCodex: 'codex.enabled',
     toggleCursor: 'cursor.enabled',
     toggleTrae: 'trae.enabled',
-    toggleAntigravity: 'antigravity.enabled'
+    toggleAntigravity: 'antigravity.enabled',
+    toggleGrokbot: 'grokbot.enabled'
   };
   if (map[picked.action]) {
     const key = map[picked.action];
@@ -262,6 +268,7 @@ export function activate(context: vscode.ExtensionContext): void {
   const cursorItem = makeItem('cursor', 103);
   const traeItem = makeItem('trae', 102);
   const antigravityItem = makeItem('antigravity', 101);
+  const grokbotItem = makeItem('grokbot', 100);
 
   const bindings: ProviderBinding[] = [
     {
@@ -298,6 +305,13 @@ export function activate(context: vscode.ExtensionContext): void {
       icon: ICONS.antigravity,
       item: antigravityItem,
       fetch: () => fetchAntigravityUsage(context)
+    },
+    {
+      id: 'grokbot',
+      title: TITLES.grokbot,
+      icon: ICONS.grokbot,
+      item: grokbotItem,
+      fetch: () => fetchGrokbotUsage(context)
     }
   ];
 
@@ -322,6 +336,7 @@ export function activate(context: vscode.ExtensionContext): void {
     cursorItem,
     traeItem,
     antigravityItem,
+    grokbotItem,
     promptCache.statusBarItem,
     vscode.commands.registerCommand('speedometer.refresh', () => void refreshAll(bindings)),
     vscode.commands.registerCommand('speedometer.openMenu', () => void showQuickMenu(bindings)),

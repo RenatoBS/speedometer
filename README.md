@@ -7,6 +7,7 @@ Extensão para VS Code, Cursor, Windsurf e VSCodium que mostra **limites oficiai
 - **Cursor** — token em `state.vscdb` + `cursor.com/api/usage-summary` (API + Auto + on-demand)
 - **Trae** — `storage.json` + entitlements oficiais
 - **Antigravity** — cotas locais no `state.vscdb`
+- **Grok Bot** — cota semanal via `GetSandUsageStatus` (token do Cursor; mesma conta do app)
 
 Há um **dashboard** com barras de % do limite e gasto USD do Cursor (modelos). Clique na status bar para o menu (ligar/desligar ferramentas, abrir dashboard, configurações).
 

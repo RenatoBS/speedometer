@@ -1,8 +1,8 @@
 {
   "name": "speedometer",
   "displayName": "Speedometer — AI Usage",
-  "description": "Limites oficiais de Claude Code, Codex CLI, Cursor, Trae e Antigravity na status bar, com dashboard e contas extras.",
-  "version": "0.2.3",
+  "description": "Limites oficiais de Claude Code, Codex CLI, Cursor, Trae, Antigravity e Grok Bot na status bar, com dashboard e contas extras.",
+  "version": "0.2.4",
   "publisher": "local-dev",
   "license": "MIT",
   "private": true,
@@ -157,6 +157,11 @@
           "type": "boolean",
           "default": true,
           "description": "Mostrar uso do Antigravity."
+        },
+        "speedometer.grokbot.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Mostrar cota semanal do Grok Bot (usa o login do Cursor)."
         }
       }
     }

@@ -19,7 +19,8 @@ const COLORS: Record<string, string> = {
   cursor: '#3b82f6',
   codex: '#10a37f',
   trae: '#007bff',
-  antigravity: '#a855f7'
+  antigravity: '#a855f7',
+  grokbot: '#111827'
 };
 
 let currentData: DashboardData = (window as unknown as { __INITIAL_DATA__: DashboardData }).__INITIAL_DATA__;
@@ -34,8 +35,9 @@ function primaryPercent(tool: DashboardTool): number | null {
   if (tool.result.status !== 'ok') return null;
   const windows = tool.result.data.windows;
   const primary =
-    windows.find((w) => w.kind === 'session' || w.kind === 'auto' || w.kind === 'plan' || w.kind === 'entitlement') ??
-    windows[0];
+    windows.find(
+      (w) => w.kind === 'session' || w.kind === 'weekly' || w.kind === 'auto' || w.kind === 'plan' || w.kind === 'entitlement'
+    ) ?? windows[0];
   return primary ? primary.percent : null;
 }
 

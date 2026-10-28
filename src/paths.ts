@@ -12,8 +12,12 @@ function appSupportDir(appFolderName: string): string {
   return path.join(process.env.XDG_CONFIG_HOME || path.join(home, '.config'), appFolderName);
 }
 
+export function cursorUserDataDir(): string {
+  return appSupportDir('Cursor');
+}
+
 export function cursorGlobalStateDb(): string {
-  return path.join(appSupportDir('Cursor'), 'User', 'globalStorage', 'state.vscdb');
+  return path.join(cursorUserDataDir(), 'User', 'globalStorage', 'state.vscdb');
 }
 
 export function traeStorageJson(): string {

@@ -17,6 +17,7 @@ import {
   modelsFromAggregated,
   spendFromAggregated
 } from './cursorApi';
+import { isEncryptedCursorToken, openCursorAccessToken } from './cursorSafeStorage';
 
 function snapshotFromSummary(
   summary: CursorUsageSummary,
@@ -100,13 +101,25 @@ let authCache: {
 async function loadCursorAuth(
   context: vscode.ExtensionContext,
   dbPath: string
-): Promise<{ accessToken: string | null; email: string | null }> {
+): Promise<{ accessToken: string | null; email: string | null; safeStorageError?: string }> {
   if (authCache && authCache.dbPath === dbPath && Date.now() < authCache.expiresAt) {
     return authCache;
   }
-  const accessToken = await queryItemTable(context, dbPath, 'cursorAuth/accessToken');
+  const storedToken = await queryItemTable(context, dbPath, 'cursorAuth/accessToken');
   const email = await queryItemTable(context, dbPath, 'cursorAuth/cachedEmail');
-  authCache = { dbPath, expiresAt: Date.now() + AUTH_TTL_MS, accessToken, email };
+  if (storedToken && isEncryptedCursorToken(storedToken)) {
+    try {
+      const accessToken = await openCursorAccessToken(storedToken);
+      authCache = { dbPath, expiresAt: Date.now() + AUTH_TTL_MS, accessToken, email };
+      return authCache;
+    } catch (error) {
+      const safeStorageError = error instanceof Error ? error.message : String(error);
+      const detail = safeStorageError.split('\n').map((line) => line.trim()).filter(Boolean).pop() ?? safeStorageError;
+      log(`Cursor safe storage falhou: ${detail.slice(0, 300)}`);
+      return { accessToken: null, email, safeStorageError };
+    }
+  }
+  authCache = { dbPath, expiresAt: Date.now() + AUTH_TTL_MS, accessToken: storedToken, email };
   return authCache;
 }
 
@@ -116,16 +129,18 @@ export async function fetchCursorUsage(context: vscode.ExtensionContext): Promis
     return { result: { status: 'absent', message: 'Cursor não encontrado neste computador' } };
   }
 
-  const { accessToken, email } = await loadCursorAuth(context, dbPath);
+  const { accessToken, email, safeStorageError } = await loadCursorAuth(context, dbPath);
   log(`Cursor DB ${dbPath} token=${accessToken ? `ok (${accessToken.length} chars)` : 'ausente'}`);
   const primaryToken = accessToken ? constructSessionToken(accessToken) : null;
   if (!primaryToken) {
     return {
       result: {
         status: 'missing',
-        message: accessToken
-          ? 'Token do Cursor encontrado, mas o formato JWT é inválido'
-          : 'Não foi possível ler o token em state.vscdb (banco grande demais para sql.js; instale sqlite3 no PATH)'
+        message: safeStorageError
+          ? 'Token do Cursor está protegido pelo chaveiro do sistema e não pôde ser aberto. Autorize "Cursor Safe Storage" quando o sistema pedir.'
+          : accessToken
+            ? 'Token do Cursor encontrado, mas o formato JWT é inválido'
+            : 'Não foi possível ler o token em state.vscdb (banco grande demais para sql.js; instale sqlite3 no PATH)'
       }
     };
   }
